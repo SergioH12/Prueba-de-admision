@@ -1,0 +1,97 @@
+function onFormSubmit(e) {
+  var responses= e.values;
+  var hojarespuestas=SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Respuestas de formulario');
+
+  var transaccion= SpreadsheetApp.getActiveSpreadsheet().getSheetByName('TRANSACCIONES');
+  var fecha= SpreadsheetApp.getActiveSpreadsheet().getSheetByName('FECHAS');
+  var usuario= SpreadsheetApp.getActiveSpreadsheet().getSheetByName('USUARIOS');
+  var categoria= SpreadsheetApp.getActiveSpreadsheet().getSheetByName('CATEGORIAS');
+
+  var transaccion_nextrow=transaccion.getLastRow()+1;
+  var fecha_nextrow=fecha.getLastRow()+1;
+  var usuario_nextrow=usuario.getLastRow()+1;
+  var categoria_nextrow=categoria.getLastRow()+1;
+
+
+  var date= new Date();
+  var ano = date.getFullYear();
+  var mes= date.getMonth() +1;
+  var dia = date.getDate();
+
+
+
+
+
+  var id_transaccion= (Math.random() * (10000 - 0)+1).toFixed(0);
+  var id_fecha= (Math.random() * (10000 - 0)+1).toFixed(0);
+  var id_categoria= (Math.random() * (10000 - 0)+1).toFixed(0);
+
+  if(responses[1]=='TRANSACCIÓN'){
+    // se llenan los campos de la tabla fecha
+      fecha.getRange('A'+fecha_nextrow).setValue(id_fecha);
+      fecha.getRange('B'+fecha_nextrow).setValue(ano);
+      fecha.getRange('C'+fecha_nextrow).setValue(mes);
+      fecha.getRange('D'+fecha_nextrow).setValue(dia);
+      fecha.getRange('E'+fecha_nextrow).setValue(date);
+
+    // se llenan los canmpos de la tabla transaccion
+            transaccion.getRange('A' + transaccion_nextrow).setValue(id_transaccion);
+            transaccion.getRange('B' + transaccion_nextrow).setValue(id_fecha);
+            transaccion.getRange('C' + transaccion_nextrow).setValue(id_categoria);
+            transaccion.getRange('D' + transaccion_nextrow).setValue(responses[7]);//idusuario
+            transaccion.getRange('E' + transaccion_nextrow).setValue(responses[8]);
+            transaccion.getRange('F' + transaccion_nextrow).setValue(responses[10]);
+        
+
+    if(responses[8]=='GASTO'){
+
+    // se llenan los campos de la tabla catgoria
+      categoria.getRange('A' + categoria_nextrow).setValue(id_categoria);
+      categoria.getRange('B' + categoria_nextrow).setValue(responses[9]);
+
+
+      // logica de la modificacion del monto
+        
+        for(var i=1; i<= usuario_nextrow-1; i++){
+          if(usuario.getRange('A'+i).getValue()==responses[7]){
+            var nuevo_valor=parseInt(usuario.getRange('C'+i).getValue())-parseInt(responses[10]);
+            usuario.getRange('C'+i).setValue(nuevo_valor);
+            
+          }
+        }
+        
+
+    }else{
+
+      // se llenan los campos de la tabla catgoria
+          categoria.getRange('A' + categoria_nextrow).setValue(id_categoria);
+          categoria.getRange('B' + categoria_nextrow).setValue('INGRESO');
+
+      // logica de la modificacion del monto
+        for(var i=1; i<= usuario_nextrow-1; i++){
+          if(usuario.getRange('A'+i).getValue()==responses[7]){
+            var nuevo_valor=parseInt(usuario.getRange('C'+i).getValue())+parseInt(responses[10]);
+            usuario.getRange('C'+i).setValue(nuevo_valor);
+            
+          }
+        }
+        
+        
+    }
+
+    
+
+    
+          
+  }else{
+    // se llenan los datos de la tabla usuario
+      usuario.getRange('A' + usuario_nextrow).setValue(responses[2]);
+      usuario.getRange('B' + usuario_nextrow).setValue(responses[3]);
+      usuario.getRange('C' + usuario_nextrow).setValue(responses[4]);
+      usuario.getRange('D' + usuario_nextrow).setValue(responses[5]);
+      usuario.getRange('E' + usuario_nextrow).setValue(responses[6]);
+      usuario.getRange('F' + usuario_nextrow).setValue(responses[4]);
+
+      
+  }
+}
